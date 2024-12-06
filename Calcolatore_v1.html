@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatore Rata Massima</title>
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+        }
+        .container {
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 24px;
+            color: #2c3e50;
+        }
+        .description {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #34495e;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .info {
+            font-size: 12px;
+            color: #777;
+            margin-top: -5px;
+            margin-bottom: 10px;
+        }
+        .result {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px;
+            margin-top: 10px;
+            background: #f5f7fa;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .result.ok {
+            color: #27ae60;
+        }
+        .result.ko {
+            color: #e74c3c;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background: #3498db;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+        }
+        .btn:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calcolatore Rata Massima</h1>
+        <div class="description">
+            Permette di calcolare il valore della rata massima, garantendo che vengano rispettate queste due condizioni:<br>
+            1. Il limite massimo della rata non può superare il 40% della differenza tra lo stipendio netto e gli eventuali finanziamenti/prestiti del cliente.<br>
+            2. La differenza tra la cella "Reddito netto", "Finanziamenti prestiti/personali" e "Max Rata Canone IVA inclusa" deve essere sempre maggiore di 600€ per garantire la "sussistenza del cliente".<br><br>
+
+        </div>
+        <form id="calculator">
+            <div class="form-group">
+                <label for="reddito">Reddito Mensile Netto (€)</label>
+                <div class="info">Reddito netto, escludendo: 13esima, premi, extra...</div>
+                <input type="number" id="reddito" placeholder="Inserisci il reddito netto">
+            </div>
+            <div class="form-group">
+                <label for="finanziamenti">Finanziamenti/Prestiti Mensili (€)</label>
+                 <div class="info">Spese mensili per eventuali finanziamenti, prestiti, ad esempio: Mutuo, rata cellulare...</div>
+                <input type="number" id="finanziamenti" placeholder="Inserisci i finanziamenti">
+            </div>
+            <div class="form-group">
+                <label>Max Rata Canone IVA Inclusa (€)</label>
+                <div id="rataInclusa" class="result">--</div>
+            </div>
+            <div class="form-group">
+                <label>Max Rata Canone IVA Esclusa (€)</label>
+                <div id="rataEsclusa" class="result">--</div>
+            </div>
+            <div class="form-group">
+                <label>Stato</label>
+                <div id="status" class="result">--</div>
+            </div>
+        </form>
+        <button class="btn" id="calculateBtn">Calcola</button>
+    </div>
+    <script>
+        document.getElementById('calculateBtn').addEventListener('click', function () {
+            const reddito = parseFloat(document.getElementById('reddito').value) || 0;
+            const finanziamenti = parseFloat(document.getElementById('finanziamenti').value) || 0;
+
+            const maxRataPercentuale = 0.4 * (reddito - finanziamenti);
+            const differenzaMinima = (reddito - finanziamenti - maxRataPercentuale) > 600;
+
+            const maxRataInclusa = maxRataPercentuale > 0 ? maxRataPercentuale.toFixed(2) : "--";
+            const maxRataEsclusa = maxRataPercentuale > 0 ? (maxRataPercentuale / 1.22).toFixed(2) : "--";
+
+            document.getElementById('rataInclusa').textContent = maxRataInclusa;
+            document.getElementById('rataEsclusa').textContent = maxRataEsclusa;
+
+            const status = document.getElementById('status');
+            if (maxRataPercentuale <= 0 || !differenzaMinima) {
+                status.textContent = "KO - Limite non rispettato";
+                status.className = "result ko";
+            } else {
+                status.textContent = "OK - Limite rispettato";
+                status.className = "result ok";
+            }
+        });
+    </script>
+</body>
+</html>
