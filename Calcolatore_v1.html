@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calcolatore Rata Massima</title>
+    <title>Calcolatore Rata Massima Noleggio</title>
+
     <style>
         /* Reset CSS */
         * {
@@ -97,11 +98,12 @@
 </head>
 <body>
     <div class="container">
-        <h1>Calcolatore Rata Massima</h1>
+        <h1>Calcolatore Rata Massima: Clienti Privati</h1>
+
         <div class="description">
             Permette di calcolare il valore della rata massima, garantendo che vengano rispettate queste due condizioni:<br>
-            1. Il limite massimo della rata non può superare il 40% della differenza tra lo stipendio netto e gli eventuali finanziamenti/prestiti del cliente.<br>
-            2. La differenza tra la cella "Reddito netto", "Finanziamenti prestiti/personali" e "Max Rata Canone IVA inclusa" deve essere sempre maggiore di 600€ per garantire la "sussistenza del cliente".<br><br>
+            1. Il limite massimo della rata non può superare il 40% della differenza tra il Reddito mensile Netto e gli eventuali finanziamenti/prestiti del cliente.<br>
+            2. Dopo aver sottratto i "Finanziamenti/Prestiti" e la "Max Rata Canone IVA inclusa" dal "Reddito netto", il valore residuo deve essere sempre uguale o superiore ai 600€ per garantire "la sussistenza del cliente".<br><br>
 
         </div>
         <form id="calculator">
@@ -136,7 +138,7 @@
             const finanziamenti = parseFloat(document.getElementById('finanziamenti').value) || 0;
 
             const maxRataPercentuale = 0.4 * (reddito - finanziamenti);
-            const differenzaMinima = (reddito - finanziamenti - maxRataPercentuale) > 600;
+            const differenzaMinima = (reddito - finanziamenti - maxRataPercentuale) > 599;
 
             const maxRataInclusa = maxRataPercentuale > 0 ? maxRataPercentuale.toFixed(2) : "--";
             const maxRataEsclusa = maxRataPercentuale > 0 ? (maxRataPercentuale / 1.22).toFixed(2) : "--";
