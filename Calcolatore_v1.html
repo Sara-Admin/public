@@ -132,29 +132,29 @@
         </form>
         <button class="btn" id="calculateBtn">Calcola</button>
     </div>
-    <script>
-        document.getElementById('calculateBtn').addEventListener('click', function () {
-            const reddito = parseFloat(document.getElementById('reddito').value) || 0;
-            const finanziamenti = parseFloat(document.getElementById('finanziamenti').value) || 0;
+<script>
+    document.getElementById('calculateBtn').addEventListener('click', function () {
+        const reddito = parseFloat(document.getElementById('reddito').value) || 0;
+        const finanziamenti = parseFloat(document.getElementById('finanziamenti').value) || 0;
 
-            const maxRataPercentuale = 0.4 * (reddito - finanziamenti);
-            const differenzaMinima = (reddito - finanziamenti - maxRataPercentuale) > 599;
+        const maxRataPercentuale = 0.4 * (reddito - finanziamenti);
+        const differenzaMinima = (reddito - finanziamenti - maxRataPercentuale) > 599;
 
-            const maxRataInclusa = maxRataPercentuale > 0 ? maxRataPercentuale.toFixed(2) : "--";
-            const maxRataEsclusa = maxRataPercentuale > 0 ? (maxRataPercentuale / 1.22).toFixed(2) : "--";
+        const maxRataInclusa = maxRataPercentuale > 0 && differenzaMinima ? maxRataPercentuale.toFixed(2) : "Non disponibile";
+        const maxRataEsclusa = maxRataPercentuale > 0 && differenzaMinima ? (maxRataPercentuale / 1.22).toFixed(2) : "--";
 
-            document.getElementById('rataInclusa').textContent = maxRataInclusa;
-            document.getElementById('rataEsclusa').textContent = maxRataEsclusa;
+        document.getElementById('rataInclusa').textContent = maxRataInclusa;
+        document.getElementById('rataEsclusa').textContent = maxRataEsclusa;
 
-            const status = document.getElementById('status');
-            if (maxRataPercentuale <= 0 || !differenzaMinima) {
-                status.textContent = "KO - Limite non rispettato";
-                status.className = "result ko";
-            } else {
-                status.textContent = "OK - Limite rispettato";
-                status.className = "result ok";
-            }
-        });
-    </script>
+        const status = document.getElementById('status');
+        if (maxRataPercentuale <= 0 || !differenzaMinima) {
+            status.textContent = "KO - Condizioni non rispettate";
+            status.className = "result ko";
+        } else {
+            status.textContent = "OK - Condizioni rispettate";
+            status.className = "result ok";
+        }
+    });
+</script>
 </body>
 </html>
