@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sara Mobility — Leaderboard viaggio premio</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏁</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      background: #0d1c45;
+      min-height: 100vh;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      font-family: 'Inter', -apple-system, sans-serif;
+    }
+
+    /* ── Stage ── */
+    #stage {
+      width: 100%;
+      max-width: 1600px;
+      min-height: 100vh;
+      margin: 0 auto;
+      display: flex;
+      color: #f4f1ea;
+      background: #0d1c45;
+    }
+
+    /* ── LEFT HERO ── */
+    .hero {
+      width: 38%; max-width: 560px; flex-shrink: 0;
+      position: relative;
+      background: linear-gradient(180deg, #0d1c45 0%, #081438 100%);
+      border-right: 1px solid rgba(255,255,255,.06);
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(13,28,69,.60) 0%, transparent 35%, rgba(8,20,56,.85) 70%, rgba(8,20,56,.95) 100%);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .hero-glow {
+      position: absolute;
+      top: 20%; left: 50%; transform: translateX(-50%);
+      width: 560px; height: 560px;
+      background: radial-gradient(circle, rgba(227,28,95,.18) 0%, rgba(227,28,95,0) 60%);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .hero-inner {
+      position: relative; z-index: 2; height: 100%;
+      padding: 36px 40px 32px;
+      display: flex; flex-direction: column;
+    }
+    .brand-logo { width: 150px; height: auto; opacity: .95; }
+    .hero-art {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 20px 0;
+    }
+    .hero-img {
+      width: 100%; max-width: 400px; height: auto;
+      filter: drop-shadow(0 20px 40px rgba(0,0,0,.4));
+    }
+    .hero-video {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    @keyframes kenburns {
+      0%   { transform: scale(1.08) translate(0, 0); }
+      100% { transform: scale(1.18) translate(-2%, -2%); }
+    }
+    @keyframes kenburns-2 {
+      0%   { transform: scale(1.15) translate(-2%, 2%); }
+      100% { transform: scale(1.08) translate(2%, -1%); }
+    }
+    @keyframes kenburns-3 {
+      0%   { transform: scale(1.08) translate(2%, 1%); }
+      100% { transform: scale(1.18) translate(-2%, 2%); }
+    }
+    @keyframes kenburns-4 {
+      0%   { transform: scale(1.15) translate(2%, -2%); }
+      100% { transform: scale(1.08) translate(-2%, 2%); }
+    }
+    @keyframes kenburns-5 {
+      0%   { transform: scale(1.08) translate(-1%, 1%); }
+      100% { transform: scale(1.18) translate(2%, -2%); }
+    }
+    .hero-eyebrow {
+      font-size: 10px; letter-spacing: 2.5px; font-weight: 700;
+      color: #e31c5f; font-family: 'JetBrains Mono', monospace;
+    }
+    .hero-title {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 46px; line-height: .95; font-weight: 400;
+      letter-spacing: -1.5px; margin: 10px 0 0;
+      text-shadow: 0 2px 12px rgba(0,0,0,.6);
+    }
+    .hero-title em { font-style: italic; color: #e31c5f; font-weight: 300; }
+    .hero-sub {
+      font-size: 13px; line-height: 1.55; opacity: .9;
+      margin-top: 14px; max-width: 360px;
+      text-shadow: 0 1px 6px rgba(0,0,0,.5);
+    }
+
+    /* ── Countdown ── */
+    .countdown {
+      margin-top: 20px; display: flex; align-items: center; gap: 6px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      width: fit-content;
+    }
+    .cd-item { text-align: center; min-width: 46px; }
+    .cd-num {
+      font-size: 20px; font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: -.5px; line-height: 1;
+    }
+    .cd-lbl { font-size: 8px; letter-spacing: 1.5px; opacity: .55; text-transform: uppercase; margin-top: 4px; }
+    .cd-sep { width: 1px; height: 24px; background: rgba(255,255,255,.15); flex-shrink: 0; }
+
+    /* ── RIGHT BOARD ── */
+    .board {
+      flex: 1; padding: 28px 40px 24px;
+      display: flex; flex-direction: column;
+    }
+    .board-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .header-label {
+      font-size: 10px; letter-spacing: 2px; font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex; align-items: center; gap: 8px; opacity: .85;
+    }
+    .header-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: #e31c5f;
+      animation: blink .8s infinite;
+    }
+    .header-right {
+      font-size: 10px; opacity: .5; letter-spacing: .5px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    @keyframes blink { 50% { opacity: .2; } }
+
+    .board-h1 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 52px; font-weight: 400; letter-spacing: -1.5px;
+      line-height: .95; margin: 22px 0 26px;
+    }
+    .board-h1 em { font-style: italic; color: #e31c5f; font-weight: 300; }
+
+    /* ── Top 3 ── */
+    .top3 {
+      display: grid; grid-template-columns: 1.15fr 1fr 1fr;
+      gap: 10px; margin-bottom: 20px;
+    }
+    .podium {
+      padding: 16px;
+      background: rgba(255,255,255,.035);
+      border: 1px solid rgba(255,255,255,.07);
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column; min-height: 170px;
+    }
+    .podium.gold {
+      background: linear-gradient(135deg, rgba(227,28,95,.22) 0%, rgba(227,28,95,.05) 70%);
+      border: 1px solid rgba(227,28,95,.55);
+      box-shadow: 0 0 30px rgba(227,28,95,.15);
+    }
+    .podium-top {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    .podium-rank {
+      display: flex; align-items: baseline; gap: 2px;
+      font-family: 'Fraunces', Georgia, serif;
+    }
+    .podium-num { font-size: 40px; font-weight: 400; line-height: 1; letter-spacing: -2px; }
+    .podium-ord { font-size: 14px; opacity: .5; font-style: italic; }
+    .medal {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 900; color: #0d1c45;
+      box-shadow: 0 2px 6px rgba(0,0,0,.25);
+    }
+    .medal.gold   { background: linear-gradient(135deg, #ffd860, #e8a93a); }
+    .medal.silver { background: linear-gradient(135deg, #e8eef5, #b4bfcf); }
+    .medal.bronze { background: linear-gradient(135deg, #e5a673, #b47148); }
+
+    .podium-name { font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+    .podium-loc  { font-size: 11px; opacity: .6; margin-top: 2px; }
+    .podium-bottom {
+      margin-top: 14px; display: flex; align-items: flex-end;
+      justify-content: space-between;
+    }
+    .podium-orders { font-size: 30px; font-weight: 700; letter-spacing: -.5px; font-family: 'JetBrains Mono', monospace; line-height: 1; }
+    .podium-lbl    { font-size: 9px; opacity: .55; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 3px; }
+    .podium-bar    { margin-top: 12px; height: 3px; background: rgba(255,255,255,.08); border-radius: 2px; overflow: hidden; }
+    .podium-bar-fill { height: 100%; transition: width .6s cubic-bezier(.25,.8,.25,1); }
+
+    /* ── List (rank 4+) ── */
+    .list { display: flex; flex-direction: column; gap: 1px; flex: 1; overflow: hidden; }
+    .row {
+      display: grid; grid-template-columns: 40px 1fr 200px 44px 84px;
+      align-items: center; gap: 14px; padding: 10px 4px;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .row-rank { font-size: 11px; font-family: 'JetBrains Mono', monospace; opacity: .45; font-weight: 700; }
+    .row-city   { font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
+    .row-branch { font-size: 11px; opacity: .55; margin-top: 1px; }
+    .row-bar      { height: 2px; background: rgba(255,255,255,.06); }
+    .row-bar-fill { height: 100%; background: #e31c5f; opacity: .8; }
+    .row-orders { display: flex; align-items: baseline; gap: 4px; justify-content: flex-end; }
+    .row-orders-num { font-size: 16px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .row-orders-lbl { font-size: 10px; opacity: .5; letter-spacing: .5px; }
+
+    /* ── Trend ── */
+    .trend {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 12px; font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .trend.small { font-size: 11px; }
+    .trend.up   { color: #4ed88a; }
+    .trend.down { color: #ff6b6b; }
+    .trend.flat { color: rgba(255,255,255,.4); }
+
+    /* ── Animazioni ── */
+    @keyframes slideDown  { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes slideUp    { from { opacity:0; transform:translateY(28px);  } to { opacity:1; transform:translateY(0); } }
+    @keyframes slideLeft  { from { opacity:0; transform:translateX(-18px); } to { opacity:1; transform:translateX(0); } }
+    @keyframes fadeIn     { from { opacity:0; } to { opacity:1; } }
+
+    .board-header { opacity:0; animation: slideDown .6s .1s cubic-bezier(.2,.8,.2,1) forwards; }
+    .board-h1     { opacity:0; animation: slideDown .6s .3s cubic-bezier(.2,.8,.2,1) forwards; }
+
+    .podium    { opacity:0; }
+    .podium.in { animation: slideUp .55s cubic-bezier(.2,.8,.2,1) forwards; }
+
+    .row       { opacity:0; }
+    .row.in    { animation: slideLeft .4s cubic-bezier(.2,.8,.2,1) forwards; }
+
+    .board-footer { opacity:0; animation: fadeIn .4s 1.2s forwards; }
+
+    /* ── Footer ── */
+    .board-footer {
+      margin-top: 12px; padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      font-size: 10px; letter-spacing: 1.5px; opacity: .55;
+      font-family: 'JetBrains Mono', monospace; text-transform: uppercase;
+    }
+
+    /* ── Spinner ── */
+    .spinner-wrap {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; height: 100%; gap: 16px;
+      opacity: .6; font-size: 12px; letter-spacing: 1px;
+      font-family: 'JetBrains Mono', monospace; text-transform: uppercase;
+    }
+    .spinner {
+      width: 36px; height: 36px; border: 2px solid rgba(255,255,255,.1);
+      border-top-color: #e31c5f; border-radius: 50%;
+      animation: spin .6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-box {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; height: 100%; gap: 10px;
+      font-family: 'JetBrains Mono', monospace; color: #ff6b6b;
+      font-size: 12px; text-align: center;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 680px) {
+      #stage {
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      .hero-glow { width: 100%; height: 300px; }
+
+      /* Hero: banner compatto in cima */
+      .hero {
+        width: 100%; max-width: 100%;
+        height: 220px; flex-shrink: 0;
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+      }
+      .hero-inner {
+        padding: 20px 20px 16px;
+        flex-direction: row;
+        align-items: flex-end;
+        height: 100%;
+      }
+      .brand-logo { width: 100px; }
+      .hero-art   { display: none; }
+      .hero-text  { flex: 1; padding-left: 16px; }
+      .hero-eyebrow { font-size: 9px; }
+      .hero-title { font-size: 28px; letter-spacing: -1px; margin: 6px 0 0; }
+      .hero-sub   { display: none; }
+      .countdown  { margin-top: 10px; padding: 8px 10px; gap: 4px; }
+      .cd-item    { min-width: 34px; }
+      .cd-num     { font-size: 15px; }
+      .cd-lbl     { font-size: 7px; }
+      .cd-sep     { height: 18px; }
+
+      /* Board */
+      .board { padding: 16px 14px 16px; }
+      .board-h1 { font-size: 30px; margin: 14px 0 16px; }
+
+      /* Top 3: colonne più strette */
+      .top3 { grid-template-columns: 1.1fr 1fr 1fr; gap: 6px; margin-bottom: 14px; }
+      .podium { padding: 10px; min-height: 130px; }
+      .podium-num { font-size: 28px; }
+      .podium-name { font-size: 10px; letter-spacing: .5px; }
+      .podium-loc  { font-size: 9px; }
+      .podium-orders { font-size: 20px; }
+      .podium-lbl    { font-size: 8px; }
+      .medal { width: 22px; height: 22px; font-size: 10px; }
+
+      /* Righe classifica: rank | nome | ordini | trend */
+      .row { grid-template-columns: 30px 1fr 70px 40px; gap: 8px; padding: 8px 2px; }
+      /* nasconde la barra proporzionale (3a colonna originale: 200px) */
+      .row-bar { display: none; }
+
+      .row-city   { font-size: 11px; }
+      .row-branch { font-size: 10px; }
+      .row-orders-num { font-size: 13px; }
+      .row-orders-lbl { display: none; }
+
+      .board-footer { font-size: 9px; }
+    }
+
+    /* ── Tablet ── */
+    @media (min-width: 681px) and (max-width: 1024px) {
+      .hero { width: 30%; }
+      .hero-inner { padding: 24px 24px 20px; }
+      .hero-title { font-size: 34px; }
+      .hero-sub   { font-size: 11px; }
+      .board { padding: 20px 24px 18px; }
+      .board-h1 { font-size: 38px; }
+      .row { grid-template-columns: 36px 1fr 140px 40px 70px; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="stage">
+
+  <!-- LEFT: Hero -->
+  <div class="hero">
+    <video class="hero-video" autoplay muted loop playsinline poster="foto/20210526134606-capri-campania-gettyimages-637818296.webp">
+      <source src="Creazione_Video_Animato_1x2.mp4" type="video/mp4">
+    </video>
+    <div class="hero-glow"></div>
+    <div class="hero-inner">
+      <img src="logo.png" alt="Sara Mobility" class="brand-logo">
+      <div class="hero-art">
+      </div>
+      <div class="hero-text">
+        <div class="hero-eyebrow">— IL PREMIO 2027</div>
+        <div class="hero-title">Capri<br><em>o equivalente.</em></div>
+        <div class="hero-sub">
+          Destinazione: 2 giorni a Capri o località equivalente.<br>
+          Periodo: Maggio/Giugno 2027.<br><br>
+          Assegnazione: le prime 3 agenzie NLT<br>per numero di contratti.
+        </div>
+        <div class="countdown">
+          <div class="cd-item"><div class="cd-num" id="cdDays">---</div><div class="cd-lbl">giorni</div></div>
+          <div class="cd-sep"></div>
+          <div class="cd-item"><div class="cd-num" id="cdHours">--</div><div class="cd-lbl">ore</div></div>
+          <div class="cd-sep"></div>
+          <div class="cd-item"><div class="cd-num" id="cdMins">--</div><div class="cd-lbl">min</div></div>
+          <div class="cd-sep"></div>
+          <div class="cd-item"><div class="cd-num" id="cdSecs">--</div><div class="cd-lbl">sec</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Board -->
+  <div class="board">
+    <div class="board-header">
+      <div class="header-label">
+        <span class="header-dot"></span>
+        CLASSIFICA AGENZIE NLT · ANNO 2026
+      </div>
+      <div class="header-right" id="lastUpdate"></div>
+    </div>
+
+    <h1 class="board-h1">Viaggio premio<br><em>Noleggio a Lungo Termine.</em></h1>
+
+    <div class="top3" id="top3">
+      <div class="spinner-wrap"><div class="spinner"></div>Caricamento...</div>
+    </div>
+
+    <div class="list" id="list"></div>
+
+  </div>
+
+</div>
+
+<script>
+
+  // ── Configurazione — Apps Script Web App (foglio privato) ──
+  const API_URL = "https://script.google.com/macros/s/AKfycbxkvttZ9DhpazWB90wESdjv-h11Pq7fRh5dSZ6jlI5HzJehXu_e4s4Q3K1XqYVACiAP/exec";
+
+  // 0=Posizione, 1=Agenzia, 2=N.Ordini, 3=Variazione, 4=Ultimo aggiornamento, 5=(vuoto), 6=Agenzia Nome Completo
+  const COL_RANK = 0, COL_ORDINI = 2, COL_VARIAZIONE = 3, COL_AGGIORNATO = 4, COL_AGENZIA = 6;
+
+  // ── Parsing timestamp DD/MM/YYYY HH:MM:SS ──
+  function parseDateTime(str) {
+    if (!str) return null;
+    const [datePart, timePart] = str.split(' ');
+    const parts = datePart.split('/');
+    if (parts.length !== 3) return null;
+    const d = parseInt(parts[0]), mon = parseInt(parts[1]) - 1, y = parseInt(parts[2]);
+    if (isNaN(d) || isNaN(mon) || isNaN(y)) return null;
+    if (timePart) {
+      const [h, m, s] = timePart.split(':').map(Number);
+      return new Date(y, mon, d, h, m, s);
+    }
+    return new Date(y, mon, d);
+  }
+
+  // ── Split "SALERNO - Sarno - 1336" → { city, branch } ──
+  function splitAgency(name) {
+    const idx = name.indexOf(' - ');
+    if (idx === -1) return { city: name, branch: '' };
+    return { city: name.slice(0, idx), branch: name.slice(idx + 3) };
+  }
+
+  // ── Fetch + parse Sheet2 via Apps Script Web App ──
+  async function loadData() {
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      const rows = json.values || [];
+      const data = processRows(rows);
+      render(data);
+    } catch (err) {
+      showError(err.message);
+    }
+  }
+
+  function processRows(rows) {
+    const dataRows = rows.slice(1).filter(r => r[COL_RANK] && r[COL_ORDINI]);
+    const ultimaDataRaw = dataRows.find(r => r[COL_AGGIORNATO]);
+    const ultimaData = ultimaDataRaw ? parseDateTime(ultimaDataRaw[COL_AGGIORNATO]) : null;
+
+    const leaderboard = dataRows.map(row => {
+      const v = parseInt(row[COL_VARIAZIONE]) || 0;
+      const { city, branch } = splitAgency((row[COL_AGENZIA] || '').trim());
+      return {
+        rank:   parseInt(row[COL_RANK]),
+        city, branch,
+        orders: parseInt(row[COL_ORDINI]) || 0,
+        trend:  v > 0 ? 'up' : v < 0 ? 'down' : 'flat',
+        delta:  Math.abs(v),
+      };
+    }).filter(a => a.city && !isNaN(a.rank));
+
+    return { leaderboard, ultimaData };
+  }
+
+  // ── Trend HTML ──
+  function trendHTML(trend, delta, small) {
+    const icon = trend === 'flat' ? '—' : (trend === 'up' ? '▲' : '▼');
+    const num  = trend !== 'flat' ? `<span>${delta}</span>` : '';
+    return `<div class="trend ${trend}${small ? ' small' : ''}"><span>${icon}</span>${num}</div>`;
+  }
+
+  // ── Counter animato ──
+  function animCount(el, target, delay) {
+    setTimeout(() => {
+      const start = performance.now();
+      const dur = 700;
+      (function tick(now) {
+        const t = Math.min((now - start) / dur, 1);
+        el.textContent = Math.round((1 - Math.pow(1 - t, 3)) * target);
+        if (t < 1) requestAnimationFrame(tick);
+      })(start);
+    }, delay);
+  }
+
+  // ── Render ──
+  function render({ leaderboard, ultimaData }) {
+    const maxOrd = leaderboard[0]?.orders || 1;
+    const top3 = leaderboard.slice(0, 3);
+    const rest = leaderboard.slice(3);
+
+    // Ultimo aggiornamento
+    if (ultimaData) {
+      const d = ultimaData.toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
+      const t = ultimaData.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('lastUpdate').textContent = `Aggiornato · ${d}, ${t}`;
+    }
+
+    // ── Top 3: render senza numeri, poi anima ──
+    const medalCls  = ['gold', 'silver', 'bronze'];
+    const ordSfx    = ['st', 'nd', 'rd'];
+    const barColors = ['#e31c5f', '#d9dee8', '#d99566'];
+
+    document.getElementById('top3').innerHTML = top3.map((a, i) => `
+      <div class="podium ${i === 0 ? 'gold' : ''}">
+        <div class="podium-top">
+          <div class="podium-rank">
+            <span class="podium-num">${i + 1}</span>
+            <span class="podium-ord">${ordSfx[i]}</span>
+          </div>
+          <div class="medal ${medalCls[i]}">${i + 1}</div>
+        </div>
+        <div class="podium-name">${a.branch}</div>
+        <div class="podium-loc">${a.city}</div>
+        <div class="podium-bottom">
+          <div>
+            <div class="podium-orders" data-target="${a.orders}">0</div>
+            <div class="podium-lbl">ordini</div>
+          </div>
+          ${trendHTML(a.trend, a.delta, false)}
+        </div>
+        <div class="podium-bar">
+          <div class="podium-bar-fill" data-pct="${Math.round((a.orders/maxOrd)*100)}"
+               style="width:0; background:${barColors[i]}"></div>
+        </div>
+      </div>`).join('');
+
+    // ── Lista rank 4+: dal basso verso l'alto ──
+    document.getElementById('list').innerHTML = rest.map(a => `
+      <div class="row">
+        <div class="row-rank">${String(a.rank).padStart(2, '0')}</div>
+        <div>
+          <div class="row-city">${a.branch}</div>
+          <div class="row-branch">${a.city}</div>
+        </div>
+        <div class="row-bar">
+          <div class="row-bar-fill" data-pct="${Math.round((a.orders/maxOrd)*100)}" style="width:0"></div>
+        </div>
+        ${trendHTML(a.trend, a.delta, true)}
+        <div class="row-orders">
+          <span class="row-orders-num" data-target="${a.orders}">0</span>
+          <span class="row-orders-lbl">ordini</span>
+        </div>
+      </div>`).join('');
+
+    const rows = Array.from(document.querySelectorAll('.row'));
+    const ROW_STAGGER = 300;
+    const ROW_ANIM_DUR = 400;
+
+    rows.forEach((row, i) => {
+      const reverseIdx = rows.length - 1 - i; // ultima riga prima
+      const delay = reverseIdx * ROW_STAGGER;
+      setTimeout(() => {
+        row.classList.add('in');
+        animCount(row.querySelector('.row-orders-num'),
+                  parseInt(row.querySelector('.row-orders-num').dataset.target), 60);
+        setTimeout(() => {
+          const fill = row.querySelector('.row-bar-fill');
+          fill.style.transition = 'width .6s cubic-bezier(.25,.8,.25,1)';
+          fill.style.width = fill.dataset.pct + '%';
+        }, 200);
+      }, delay);
+    });
+
+    // ── Podio: parte dopo che l'ultima riga è apparsa ──
+    const listDone = (rows.length > 0 ? (rows.length - 1) * ROW_STAGGER + ROW_ANIM_DUR : 0) + 300;
+    const podiums = document.querySelectorAll('.podium');
+    [2, 1, 0].forEach((idx, step) => { // 3°→2°→1°
+      const pod = podiums[idx];
+      if (!pod) return;
+      setTimeout(() => {
+        pod.classList.add('in');
+        animCount(pod.querySelector('.podium-orders'),
+                  parseInt(pod.querySelector('.podium-orders').dataset.target), 80);
+        setTimeout(() => {
+          const fill = pod.querySelector('.podium-bar-fill');
+          fill.style.transition = 'width .7s cubic-bezier(.25,.8,.25,1)';
+          fill.style.width = fill.dataset.pct + '%';
+        }, 300);
+      }, listDone + step * 250);
+    });
+  }
+
+  function showError(msg) {
+    document.getElementById('top3').innerHTML = `<div class="error-box">⚠️<br>${msg}</div>`;
+    document.getElementById('list').innerHTML = '';
+  }
+
+  // ── Countdown al 31/12/2026 ──
+  const CONTEST_END = new Date(2026, 11, 31, 0, 0, 0).getTime();
+  function updateCountdown() {
+    const diff = Math.max(0, CONTEST_END - Date.now());
+    const s = Math.floor(diff / 1000);
+    document.getElementById('cdDays').textContent  = String(Math.floor(s / 86400)).padStart(3, '0');
+    document.getElementById('cdHours').textContent = String(Math.floor((s % 86400) / 3600)).padStart(2, '0');
+    document.getElementById('cdMins').textContent  = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+    document.getElementById('cdSecs').textContent  = String(s % 60).padStart(2, '0');
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  loadData();
+  setInterval(loadData, 5 * 60 * 1000);
+</script>
+</body>
+</html>
