@@ -7,7 +7,7 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏁</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -18,7 +18,7 @@
       width: 100%;
       max-width: 100%;
       overflow-x: hidden;
-      font-family: 'Inter', -apple-system, sans-serif;
+      font-family: 'Manrope', -apple-system, sans-serif;
     }
 
     /* ── Stage ── */
@@ -100,10 +100,10 @@
     }
     .hero-eyebrow {
       font-size: 10px; letter-spacing: 2.5px; font-weight: 700;
-      color: #e31c5f; font-family: 'JetBrains Mono', monospace;
+      color: #e31c5f; font-family: 'Manrope', sans-serif;
     }
     .hero-title {
-      font-family: 'Fraunces', Georgia, serif;
+      font-family: 'Manrope', sans-serif;
       font-size: 46px; line-height: .95; font-weight: 400;
       letter-spacing: -1.5px; margin: 10px 0 0;
       text-shadow: 0 2px 12px rgba(0,0,0,.6);
@@ -126,7 +126,7 @@
     .cd-item { text-align: center; min-width: 46px; }
     .cd-num {
       font-size: 20px; font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'Manrope', sans-serif;
       letter-spacing: -.5px; line-height: 1;
     }
     .cd-lbl { font-size: 8px; letter-spacing: 1.5px; opacity: .55; text-transform: uppercase; margin-top: 4px; }
@@ -143,7 +143,7 @@
     }
     .header-label {
       font-size: 10px; letter-spacing: 2px; font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'Manrope', sans-serif;
       display: flex; align-items: center; gap: 8px; opacity: .85;
     }
     .header-dot {
@@ -152,12 +152,12 @@
     }
     .header-right {
       font-size: 10px; opacity: .5; letter-spacing: .5px;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'Manrope', sans-serif;
     }
     @keyframes blink { 50% { opacity: .2; } }
 
     .board-h1 {
-      font-family: 'Fraunces', Georgia, serif;
+      font-family: 'Manrope', sans-serif;
       font-size: 52px; font-weight: 400; letter-spacing: -1.5px;
       line-height: .95; margin: 22px 0 26px;
     }
@@ -186,7 +186,7 @@
     }
     .podium-rank {
       display: flex; align-items: baseline; gap: 2px;
-      font-family: 'Fraunces', Georgia, serif;
+      font-family: 'Manrope', sans-serif;
     }
     .podium-num { font-size: 40px; font-weight: 400; line-height: 1; letter-spacing: -2px; }
     .podium-ord { font-size: 14px; opacity: .5; font-style: italic; }
@@ -206,7 +206,7 @@
       margin-top: 14px; display: flex; align-items: flex-end;
       justify-content: space-between;
     }
-    .podium-orders { font-size: 30px; font-weight: 700; letter-spacing: -.5px; font-family: 'JetBrains Mono', monospace; line-height: 1; }
+    .podium-orders { font-size: 30px; font-weight: 700; letter-spacing: -.5px; font-family: 'Manrope', sans-serif; line-height: 1; }
     .podium-lbl    { font-size: 9px; opacity: .55; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 3px; }
     .podium-bar    { margin-top: 12px; height: 3px; background: rgba(255,255,255,.08); border-radius: 2px; overflow: hidden; }
     .podium-bar-fill { height: 100%; transition: width .6s cubic-bezier(.25,.8,.25,1); }
@@ -218,20 +218,20 @@
       align-items: center; gap: 14px; padding: 10px 4px;
       border-bottom: 1px solid rgba(255,255,255,.05);
     }
-    .row-rank { font-size: 11px; font-family: 'JetBrains Mono', monospace; opacity: .45; font-weight: 700; }
+    .row-rank { font-size: 11px; font-family: 'Manrope', sans-serif; opacity: .45; font-weight: 700; }
     .row-city   { font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
     .row-branch { font-size: 11px; opacity: .55; margin-top: 1px; }
     .row-bar      { height: 2px; background: rgba(255,255,255,.06); }
     .row-bar-fill { height: 100%; background: #e31c5f; opacity: .8; }
     .row-orders { display: flex; align-items: baseline; gap: 4px; justify-content: flex-end; }
-    .row-orders-num { font-size: 16px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .row-orders-num { font-size: 16px; font-weight: 700; font-family: 'Manrope', sans-serif; }
     .row-orders-lbl { font-size: 10px; opacity: .5; letter-spacing: .5px; }
 
     /* ── Trend ── */
     .trend {
       display: inline-flex; align-items: center; gap: 4px;
       font-size: 12px; font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'Manrope', sans-serif;
     }
     .trend.small { font-size: 11px; }
     .trend.up   { color: #4ed88a; }
@@ -260,7 +260,7 @@
       margin-top: 12px; padding-top: 12px;
       border-top: 1px solid rgba(255,255,255,.08);
       font-size: 10px; letter-spacing: 1.5px; opacity: .55;
-      font-family: 'JetBrains Mono', monospace; text-transform: uppercase;
+      font-family: 'Manrope', sans-serif; text-transform: uppercase;
     }
 
     /* ── Spinner ── */
@@ -268,7 +268,7 @@
       display: flex; flex-direction: column; align-items: center;
       justify-content: center; height: 100%; gap: 16px;
       opacity: .6; font-size: 12px; letter-spacing: 1px;
-      font-family: 'JetBrains Mono', monospace; text-transform: uppercase;
+      font-family: 'Manrope', sans-serif; text-transform: uppercase;
     }
     .spinner {
       width: 36px; height: 36px; border: 2px solid rgba(255,255,255,.1);
@@ -280,7 +280,7 @@
     .error-box {
       display: flex; flex-direction: column; align-items: center;
       justify-content: center; height: 100%; gap: 10px;
-      font-family: 'JetBrains Mono', monospace; color: #ff6b6b;
+      font-family: 'Manrope', sans-serif; color: #ff6b6b;
       font-size: 12px; text-align: center;
     }
 
@@ -417,10 +417,10 @@
 <script>
 
   // ── Configurazione — Apps Script Web App (foglio privato) ──
-  const API_URL = "https://script.google.com/macros/s/AKfycbxkvttZ9DhpazWB90wESdjv-h11Pq7fRh5dSZ6jlI5HzJehXu_e4s4Q3K1XqYVACiAP/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbz_mCFd02IAYrtBYZde1SoM2oYVIP4mgdkuqnOWXQsIY4t8Hfne1WtCdnEjG5P-G-tG/exec";
 
-  // 0=Posizione, 1=Agenzia, 2=N.Ordini, 3=Variazione, 4=Ultimo aggiornamento, 5=(vuoto), 6=Agenzia Nome Completo
-  const COL_RANK = 0, COL_ORDINI = 2, COL_VARIAZIONE = 3, COL_AGGIORNATO = 4, COL_AGENZIA = 6;
+  // 0=Posizione, 1=Agenzia, 2=Tipologia, 3=N.Ordini, 4=Variazione, 5=Ultimo aggiornamento
+  const COL_RANK = 0, COL_AGENZIA = 1, COL_TIPOLOGIA = 2, COL_ORDINI = 3, COL_VARIAZIONE = 4, COL_AGGIORNATO = 5;
 
   // ── Parsing timestamp DD/MM/YYYY HH:MM:SS ──
   function parseDateTime(str) {
