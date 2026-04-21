@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sara Mobility — Rappel per agenzia</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      background: #0d1c45;
+      min-height: 100vh;
+      width: 100%; max-width: 100%;
+      overflow-x: hidden;
+      font-family: 'Manrope', -apple-system, sans-serif;
+      color: #f4f1ea;
+    }
+
+    #stage {
+      width: 100%; max-width: 1600px;
+      min-height: 100vh;
+      margin: 0 auto;
+      display: flex;
+      background: #0d1c45;
+    }
+
+    /* ── LEFT HERO ── */
+    .hero {
+      width: 38%; max-width: 560px; flex-shrink: 0;
+      position: relative;
+      background: linear-gradient(180deg, #0d1c45 0%, #081438 100%);
+      border-right: 1px solid rgba(255,255,255,.06);
+      overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute;
+      top: 15%; left: 50%; transform: translateX(-50%);
+      width: 560px; height: 560px;
+      background: radial-gradient(circle, rgba(227,28,95,.18) 0%, rgba(227,28,95,0) 60%);
+      pointer-events: none;
+    }
+    .hero-inner {
+      position: relative; z-index: 2;
+      padding: 36px 40px 32px;
+      display: flex; flex-direction: column; gap: 22px;
+      min-height: 100vh;
+    }
+    .brand-logo { width: 150px; height: auto; opacity: .95; }
+    .hero-eyebrow {
+      font-size: 10px; letter-spacing: 2.5px; font-weight: 700;
+      color: #e31c5f; font-family: 'Manrope', sans-serif;
+    }
+    .hero-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 46px; line-height: .95; font-weight: 400;
+      letter-spacing: -1.5px; margin: 10px 0 0;
+    }
+    .hero-title em { font-style: italic; color: #e31c5f; font-weight: 300; }
+    .hero-sub {
+      font-size: 13px; line-height: 1.55; opacity: .85;
+      margin-top: 12px; max-width: 360px;
+    }
+
+    /* ── Tier tables ── */
+    .tier-stack {
+      margin-top: auto;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .tier-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(255,255,255,.55);
+      padding: 0 2px 6px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .tier-title::before {
+      content: '';
+      width: 4px; height: 4px; border-radius: 50%;
+      background: #e31c5f; opacity: .7;
+    }
+    .tier-table {
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+    }
+    .tier-head, .tier-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .tier-row:last-child { border-bottom: none; }
+    .tier-head {
+      background: rgba(255,255,255,.04);
+      font-family: 'Manrope', sans-serif;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: rgba(255,255,255,.6); font-weight: 700;
+    }
+    .tier-cell { padding: 8px 14px; font-size: 12px; }
+    .tier-cell + .tier-cell {
+      border-left: 1px solid rgba(255,255,255,.06);
+      text-align: right;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 700;
+    }
+    .tier-head .tier-cell { padding: 9px 14px; font-size: 9px; }
+    .tier-amt      { color: #e31c5f; }
+    .tier-amt.zero { color: rgba(255,255,255,.3); }
+
+    /* ── Soglia rappel donut ── */
+    .goal-block {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 14px;
+      padding: 4px 0 8px;
+    }
+    .goal-label {
+      font-size: 10px; letter-spacing: 2.5px; font-weight: 700;
+      color: #e31c5f; font-family: 'Manrope', sans-serif;
+    }
+    .goal-ring {
+      position: relative;
+      width: 190px; height: 190px;
+    }
+    .goal-ring svg {
+      width: 100%; height: 100%;
+      transform: rotate(-90deg);
+      overflow: visible;
+    }
+    .ring-bg, .ring-fg {
+      fill: none;
+      stroke-width: 6;
+    }
+    .ring-bg { stroke: rgba(255,255,255,.07); }
+    .ring-fg {
+      stroke: #e31c5f;
+      stroke-linecap: round;
+      stroke-dashoffset: 326.7;
+      transition: stroke-dashoffset 1.3s cubic-bezier(.2,.8,.2,1);
+      filter: drop-shadow(0 0 6px rgba(227,28,95,.45));
+    }
+    .ring-center {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 4px;
+    }
+    .ring-num {
+      font-family: 'Manrope', sans-serif;
+      font-size: 62px; font-weight: 400; line-height: 1;
+      letter-spacing: -2px;
+    }
+    .ring-target {
+      font-family: 'Manrope', sans-serif;
+      font-size: 11px; opacity: .5;
+      letter-spacing: 2px;
+    }
+    .goal-caption {
+      font-family: 'Manrope', sans-serif;
+      font-size: 11px; letter-spacing: .6px;
+      text-align: center;
+      opacity: .8;
+    }
+    .goal-caption .remain-n {
+      color: #e31c5f; font-weight: 700; font-size: 14px;
+    }
+    .goal-caption.done {
+      color: #4ed88a; font-weight: 700; opacity: 1;
+    }
+
+    /* ── Board header link to classifica ── */
+    .nav-link {
+      font-size: 10px; letter-spacing: 1.5px; font-weight: 700;
+      font-family: 'Manrope', sans-serif;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.5);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .nav-link:hover { color: #e31c5f; }
+
+    /* ── RIGHT BOARD ── */
+    .board {
+      flex: 1; padding: 28px 40px 24px;
+      display: flex; flex-direction: column;
+    }
+    .board-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .header-label {
+      font-size: 10px; letter-spacing: 2px; font-weight: 700;
+      font-family: 'Manrope', sans-serif;
+      display: flex; align-items: center; gap: 8px; opacity: .85;
+    }
+    .header-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: #e31c5f;
+      animation: blink .8s infinite;
+    }
+    .header-right {
+      font-size: 10px; opacity: .5; letter-spacing: .5px;
+      font-family: 'Manrope', sans-serif;
+    }
+    @keyframes blink { 50% { opacity: .2; } }
+
+    .board-h1 {
+      font-family: 'Manrope', sans-serif;
+      font-size: 52px; font-weight: 400; letter-spacing: -1.5px;
+      line-height: .95; margin: 22px 0 22px;
+    }
+    .board-h1 em { font-style: italic; color: #e31c5f; font-weight: 300; }
+
+    /* ── Rappel rows ── */
+    .list { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+    .rrow {
+      padding: 14px 4px 18px;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .rrow-head {
+      display: grid;
+      grid-template-columns: 40px 1fr auto;
+      align-items: start; gap: 14px;
+    }
+    .rrow-rank {
+      font-size: 11px; font-family: 'Manrope', sans-serif;
+      opacity: .45; font-weight: 700;
+    }
+    .rrow-city   { font-size: 13px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
+    .rrow-branch { font-size: 11px; opacity: .55; margin-top: 1px; }
+    .rrow-total {
+      font-family: 'Manrope', sans-serif;
+      font-size: 18px; font-weight: 700; color: #e31c5f;
+      letter-spacing: -.3px;
+    }
+    .rrow-total.zero { color: rgba(255,255,255,.3); font-weight: 400; }
+
+    /* ── Progress bar ── */
+    .bar-wrap {
+      position: relative;
+      height: 78px;
+      margin: 0 8px 0 48px;
+    }
+    .bar-ticknums, .bar-rates {
+      position: absolute; left: 0; right: 0;
+      pointer-events: none;
+    }
+    .bar-ticknums { top: 0; height: 14px; }
+    .bar-rates    { bottom: 0; height: 14px; }
+    .bar-ticknums span, .bar-rates span {
+      position: absolute;
+      left: var(--x, 0%);
+      transform: translateX(-50%);
+      font-family: 'Manrope', sans-serif;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .bar-ticknums span {
+      top: 0;
+      font-size: 10px;
+      color: rgba(255,255,255,.45);
+    }
+    .bar-rates span {
+      bottom: 0;
+      font-size: 9px;
+      letter-spacing: .3px;
+      color: rgba(255,255,255,.4);
+    }
+
+    .bar-track {
+      position: absolute; top: 52px; left: 0; right: 0;
+      height: 3px;
+      background: rgba(255,255,255,.08);
+    }
+    .bar-fill {
+      position: absolute; left: 0; top: 0; height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, rgba(227,28,95,.35) 0%, rgba(227,28,95,.95) 100%);
+      transition: width .9s cubic-bezier(.2,.8,.2,1);
+    }
+    .bar-tick {
+      position: absolute;
+      top: -5px; left: var(--x, 0%);
+      width: 1px; height: 13px;
+      background: rgba(255,255,255,.22);
+      transform: translateX(-50%);
+      font-style: normal;
+    }
+
+    .bar-flag {
+      position: absolute;
+      top: 50%; left: var(--x, 0%);
+      width: 18px; height: 18px;
+      transition: left .9s cubic-bezier(.2,.8,.2,1);
+      transform: translate(-50%, -50%);
+      z-index: 3;
+    }
+    .bar-flag::before {
+      content: '';
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid #e31c5f;
+      box-shadow: 0 0 0 3px rgba(227,28,95,.2), 0 2px 6px rgba(0,0,0,.35);
+    }
+    .flag-body {
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #e31c5f;
+      color: #fff;
+      font-family: 'Manrope', sans-serif;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: .2px;
+      padding: 5px 9px;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(227,28,95,.35);
+    }
+    .flag-body::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 7px; height: 7px;
+      background: #e31c5f;
+    }
+    .bar-flag.zero::before {
+      background: rgba(255,255,255,.5);
+      border-color: rgba(255,255,255,.3);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.08);
+    }
+    .bar-flag.zero .flag-body {
+      background: rgba(255,255,255,.15);
+      color: rgba(255,255,255,.8);
+      box-shadow: none;
+    }
+    .bar-flag.zero .flag-body::after {
+      background: rgba(255,255,255,.15);
+    }
+
+    /* ── Next-step hint + tooltip ── */
+    .rrow-right {
+      display: flex; flex-direction: column; align-items: flex-end; gap: 5px;
+    }
+    .next-hint {
+      position: relative;
+      display: inline-flex; align-items: center; gap: 4px;
+      cursor: default;
+    }
+    .next-hint-icon {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      border: 1px solid rgba(245,158,11,.45);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Manrope', sans-serif;
+      font-size: 9px; font-weight: 700;
+      color: rgba(245,158,11,.6);
+      line-height: 1;
+      transition: border-color .2s, color .2s;
+      flex-shrink: 0;
+    }
+    .next-hint-label {
+      font-family: 'Manrope', sans-serif;
+      font-size: 12px; font-weight: 600;
+      letter-spacing: .4px;
+      color: rgba(245,158,11,1);
+      transition: color .2s;
+    }
+    .next-hint:hover .next-hint-icon  { border-color: #f59e0b; color: #f59e0b; }
+    .next-hint:hover .next-hint-label { color: #f59e0b; }
+    .next-hint:hover .next-tooltip    { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+    .next-tooltip {
+      position: absolute;
+      right: 0; top: calc(100% + 8px);
+      width: 240px;
+      background: #12255a;
+      border: 1px solid rgba(245,158,11,.25);
+      padding: 11px 14px;
+      font-family: 'Manrope', sans-serif;
+      font-size: 11px; line-height: 1.6;
+      color: rgba(255,255,255,.8);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(4px);
+      transition: opacity .18s, transform .18s;
+      z-index: 20;
+      box-shadow: 0 8px 24px rgba(0,0,0,.4);
+    }
+    .next-tooltip::before {
+      content: '';
+      position: absolute;
+      top: -5px; right: 18px;
+      width: 8px; height: 8px;
+      background: #12255a;
+      border-left: 1px solid rgba(245,158,11,.25);
+      border-top: 1px solid rgba(245,158,11,.25);
+      transform: rotate(45deg);
+    }
+    .next-tooltip strong { color: #f59e0b; font-weight: 700; }
+    .next-hint.top .next-hint-icon  { border-color: rgba(78,216,138,.4); color: rgba(78,216,138,.6); }
+    .next-hint.top .next-hint-label { color: rgba(78,216,138,.55); }
+
+    /* ── Spinner / error ── */
+    .spinner-wrap {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 60px 0; gap: 16px;
+      opacity: .6; font-size: 12px; letter-spacing: 1px;
+      font-family: 'Manrope', sans-serif; text-transform: uppercase;
+    }
+    .spinner {
+      width: 36px; height: 36px; border: 2px solid rgba(255,255,255,.1);
+      border-top-color: #e31c5f; border-radius: 50%;
+      animation: spin .6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error-box {
+      padding: 40px 0; text-align: center;
+      font-family: 'Manrope', sans-serif; color: #ff6b6b;
+      font-size: 12px;
+    }
+
+    /* ── Footer ── */
+    .board-footer {
+      margin-top: 12px; padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      font-size: 10px; letter-spacing: 1.5px; opacity: .55;
+      font-family: 'Manrope', sans-serif; text-transform: uppercase;
+    }
+
+
+    /* ── Animazioni ── */
+    @keyframes slideDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes slideLeft { from { opacity:0; transform:translateX(-18px); } to { opacity:1; transform:translateX(0); } }
+    @keyframes fadeIn    { from { opacity:0; } to { opacity:1; } }
+
+    .board-header { opacity:0; animation: slideDown .6s .1s cubic-bezier(.2,.8,.2,1) forwards; }
+    .board-h1     { opacity:0; animation: slideDown .6s .3s cubic-bezier(.2,.8,.2,1) forwards; }
+    .rrow         { opacity:0; }
+    .rrow.in      { animation: slideLeft .4s cubic-bezier(.2,.8,.2,1) forwards; }
+
+    /* ── Mobile ── */
+    @media (max-width: 680px) {
+      #stage { flex-direction: column; }
+      .hero {
+        width: 100%; max-width: 100%;
+        flex-shrink: 0;
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+      }
+      .hero-glow  { width: 100%; height: 300px; }
+      .hero-inner { padding: 22px 20px 22px; min-height: auto; gap: 14px; }
+      .brand-logo { width: 100px; }
+      .hero-title { font-size: 30px; }
+      .hero-sub   { font-size: 12px; }
+      .tier-cell  { padding: 8px 12px; font-size: 11px; }
+      .tier-head .tier-cell { font-size: 8px; }
+
+      .goal-block  { gap: 10px; padding: 0; }
+      .goal-ring   { width: 140px; height: 140px; }
+      .ring-num    { font-size: 46px; letter-spacing: -1.5px; }
+      .ring-target { font-size: 9px; letter-spacing: 1.5px; }
+      .goal-caption { font-size: 10px; }
+      .goal-caption .remain-n { font-size: 12px; }
+
+      .board { padding: 16px 14px 16px; }
+      .board-h1 { font-size: 30px; margin: 14px 0 16px; }
+
+      .rrow         { padding: 12px 2px 16px; gap: 10px; }
+      .rrow-head    { grid-template-columns: 28px 1fr auto; gap: 8px; }
+      .rrow-city    { font-size: 11px; }
+      .rrow-branch  { font-size: 10px; }
+      .rrow-total   { font-size: 15px; }
+      .next-tooltip { width: 200px; font-size: 10px; right: auto; left: 50%; transform: translateX(-50%) translateY(4px); }
+      .next-hint:hover .next-tooltip { transform: translateX(-50%) translateY(0); }
+      .next-tooltip::before { right: auto; left: 50%; transform: translateX(-50%) rotate(45deg); }
+      .bar-wrap     { height: 66px; margin: 0 4px 0 36px; }
+      .bar-track    { top: 44px; }
+      .bar-ticknums span { font-size: 9px; }
+      .bar-rates span    { font-size: 8px; letter-spacing: 0; }
+      .flag-body         { font-size: 9px; padding: 4px 7px; }
+      .board-footer { font-size: 9px; }
+    }
+
+    /* ── Tablet ── */
+    @media (min-width: 681px) and (max-width: 1024px) {
+      .hero { width: 34%; }
+      .hero-title { font-size: 34px; }
+      .board { padding: 20px 24px 18px; }
+      .board-h1 { font-size: 38px; }
+      .rrow-head { grid-template-columns: 34px 1fr auto; gap: 10px; }
+      .bar-wrap  { margin: 0 4px 0 44px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="stage">
+
+  <!-- LEFT: Hero -->
+  <div class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-inner">
+      <img src="logo.png" alt="Sara Mobility" class="brand-logo">
+      <div>
+        <div class="hero-eyebrow">— RAPPEL 2026</div>
+        <div class="hero-title">Contributo<br><em>per ordine.</em></div>
+        <div class="hero-sub">
+          Il contributo maturato per ogni ordine dipende dal numero totale di ordini completati dall'agenzia nell'anno.
+        </div>
+      </div>
+
+      <div class="goal-block">
+        <div class="goal-label">— SOGLIA RAPPEL</div>
+        <div class="goal-ring">
+          <svg viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="52" />
+            <circle class="ring-fg" cx="60" cy="60" r="52" id="ringFg"
+                    stroke-dasharray="326.7" />
+          </svg>
+          <div class="ring-center">
+            <div class="ring-num" id="goalNum">0</div>
+            <div class="ring-target">/ 100 ORDINI</div>
+          </div>
+        </div>
+        <div class="goal-caption" id="goalCaption">—</div>
+      </div>
+
+      <div class="tier-stack">
+        <div>
+          <div class="tier-title">Quotatore</div>
+          <div class="tier-table">
+            <div class="tier-head">
+              <div class="tier-cell">Ordini</div>
+              <div class="tier-cell">Contributo / ordine</div>
+            </div>
+            <div class="tier-row"><div class="tier-cell">da 0 a 2</div><div class="tier-cell tier-amt zero">€ 0</div></div>
+            <div class="tier-row"><div class="tier-cell">da 3 a 9</div><div class="tier-cell tier-amt">€ 100</div></div>
+            <div class="tier-row"><div class="tier-cell">da 10 a 14</div><div class="tier-cell tier-amt">€ 250</div></div>
+            <div class="tier-row"><div class="tier-cell">da 15 a 19</div><div class="tier-cell tier-amt">€ 350</div></div>
+            <div class="tier-row"><div class="tier-cell">da 20 a 29</div><div class="tier-cell tier-amt">€ 500</div></div>
+            <div class="tier-row"><div class="tier-cell">30 o più</div><div class="tier-cell tier-amt">€ 600</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="tier-title">Segnalatore</div>
+          <div class="tier-table">
+            <div class="tier-head">
+              <div class="tier-cell">Ordini</div>
+              <div class="tier-cell">Contributo / ordine</div>
+            </div>
+            <div class="tier-row"><div class="tier-cell">da 0 a 4</div><div class="tier-cell tier-amt zero">€ 0</div></div>
+            <div class="tier-row"><div class="tier-cell">da 5 a 9</div><div class="tier-cell tier-amt">€ 50</div></div>
+            <div class="tier-row"><div class="tier-cell">da 10 a 19</div><div class="tier-cell tier-amt">€ 100</div></div>
+            <div class="tier-row"><div class="tier-cell">20 o più</div><div class="tier-cell tier-amt">€ 200</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Board -->
+  <div class="board">
+    <div class="board-header">
+      <div class="header-label">
+        <span class="header-dot"></span>
+        RAPPEL AGENZIE NLT · ANNO 2026
+      </div>
+      <a class="nav-link" href="index.html">← Classifica</a>
+    </div>
+
+    <h1 class="board-h1">Rappel maturato<br><em>per agenzia.</em></h1>
+
+    <div class="list" id="list">
+      <div class="spinner-wrap"><div class="spinner"></div>Caricamento...</div>
+    </div>
+
+    <div class="board-footer" id="lastUpdate"></div>
+  </div>
+
+</div>
+
+<script>
+  // ── Configurazione — Apps Script Web App (foglio privato) ──
+  const API_URL = "https://script.google.com/macros/s/AKfycbz_mCFd02IAYrtBYZde1SoM2oYVIP4mgdkuqnOWXQsIY4t8Hfne1WtCdnEjG5P-G-tG/exec";
+
+  // 0=Posizione, 1=Agenzia, 2=Tipologia, 3=N.Ordini, 4=Variazione, 5=Ultimo aggiornamento
+  const COL_RANK = 0, COL_AGENZIA = 1, COL_TIPOLOGIA = 2, COL_ORDINI = 3, COL_AGGIORNATO = 5;
+
+  // ── Config rappel per tipologia ──
+  const RAPPEL = {
+    quotatore: {
+      tiers: [{min:0,rate:0},{min:3,rate:100},{min:10,rate:250},{min:15,rate:350},{min:20,rate:500},{min:30,rate:600}],
+      rate: (o) => o >= 30 ? 600 : o >= 20 ? 500 : o >= 15 ? 350 : o >= 10 ? 250 : o >= 3 ? 100 : 0,
+      anchors: [[0,0],[3,0.15],[10,0.30],[15,0.45],[20,0.60],[30,0.80],[50,1]],
+      ticks: [
+        { n: 3,  x: '15%' },
+        { n: 10, x: '30%' },
+        { n: 15, x: '45%' },
+        { n: 20, x: '60%' },
+        { n: 30, x: '80%' },
+      ],
+      rates: [
+        { label: '€ 0',   x: '7.5%'  },
+        { label: '€ 100', x: '22.5%' },
+        { label: '€ 250', x: '37.5%' },
+        { label: '€ 350', x: '52.5%' },
+        { label: '€ 500', x: '70%'   },
+        { label: '€ 600', x: '90%'   },
+      ],
+    },
+    segnalatore: {
+      tiers: [{min:0,rate:0},{min:5,rate:50},{min:10,rate:100},{min:20,rate:200}],
+      rate: (o) => o >= 20 ? 200 : o >= 10 ? 100 : o >= 5 ? 50 : 0,
+      anchors: [[0,0],[5,0.25],[10,0.50],[20,0.75],[40,1]],
+      ticks: [
+        { n: 5,  x: '25%' },
+        { n: 10, x: '50%' },
+        { n: 20, x: '75%' },
+      ],
+      rates: [
+        { label: '€ 0',   x: '12.5%' },
+        { label: '€ 50',  x: '37.5%' },
+        { label: '€ 100', x: '62.5%' },
+        { label: '€ 200', x: '87.5%' },
+      ],
+    },
+  };
+
+  function nextStep(orders, cfg) {
+    const next = cfg.tiers.find(t => t.min > orders);
+    if (!next) return null;
+    const currentTotal = orders * cfg.rate(orders);
+    const newTotal     = next.min * next.rate;
+    return {
+      ordersNeeded:   next.min - orders,
+      nextRate:       next.rate,
+      additionalGain: newTotal - currentTotal,
+      newTotal,
+    };
+  }
+
+  function configFor(tipo) {
+    return RAPPEL[(tipo || '').toString().trim().toLowerCase()] || RAPPEL.quotatore;
+  }
+
+  // ── N ordini → posizione sulla barra (0–1), lineare a tratti ──
+  function positionFor(n, anchors) {
+    if (n <= 0) return 0;
+    const last = anchors[anchors.length - 1];
+    if (n >= last[0]) return 1;
+    for (let i = 1; i < anchors.length; i++) {
+      const [x1, y1] = anchors[i-1];
+      const [x2, y2] = anchors[i];
+      if (n <= x2) return y1 + (y2 - y1) * (n - x1) / (x2 - x1);
+    }
+    return 1;
+  }
+
+  function fmtEUR(v) {
+    return '€ ' + Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  function parseDateTime(str) {
+    if (!str) return null;
+    const [datePart, timePart] = str.split(' ');
+    const parts = datePart.split('/');
+    if (parts.length !== 3) return null;
+    const d = parseInt(parts[0]), mon = parseInt(parts[1]) - 1, y = parseInt(parts[2]);
+    if (isNaN(d) || isNaN(mon) || isNaN(y)) return null;
+    if (timePart) {
+      const [h, m, s] = timePart.split(':').map(Number);
+      return new Date(y, mon, d, h, m, s);
+    }
+    return new Date(y, mon, d);
+  }
+
+  function splitAgency(name) {
+    const idx = name.indexOf(' - ');
+    if (idx === -1) return { city: name, branch: '' };
+    return { city: name.slice(0, idx), branch: name.slice(idx + 3) };
+  }
+
+  async function loadData() {
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      const allRows = (json.values || []).slice(1);
+
+      const totalRow = allRows.find(r => (r[COL_AGENZIA] || '').toString().trim().toUpperCase() === 'TOTALE ORDINI 2026');
+      const totalOrders = totalRow ? (parseInt(totalRow[COL_ORDINI]) || 0) : null;
+
+      const rows = allRows.filter(r => r[COL_RANK] && r[COL_ORDINI]);
+
+      const ultimaDataRaw = rows.find(r => r[COL_AGGIORNATO]);
+      const ultimaData = ultimaDataRaw ? parseDateTime(ultimaDataRaw[COL_AGGIORNATO]) : null;
+
+      const agencies = rows.map(r => {
+        const orders = parseInt(r[COL_ORDINI]) || 0;
+        const cfg    = configFor(r[COL_TIPOLOGIA]);
+        const rate   = cfg.rate(orders);
+        const { city, branch } = splitAgency((r[COL_AGENZIA] || '').trim());
+        return { city, branch, orders, rate, cfg, total: orders * rate };
+      }).sort((a, b) => b.total - a.total || b.orders - a.orders);
+
+      render(agencies, ultimaData, totalOrders);
+    } catch (err) {
+      document.getElementById('list').innerHTML =
+        `<div class="error-box">Errore: ${err.message}</div>`;
+    }
+  }
+
+  function render(agencies, ultimaData, trueTotalOrders) {
+    if (ultimaData) {
+      const d = ultimaData.toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
+      const t = ultimaData.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('lastUpdate').textContent = `Aggiornato · ${d}, ${t}`;
+    }
+
+    // ── Donut soglia 100 ordini ──
+    const GOAL = 100;
+    const totalOrders = (trueTotalOrders != null) ? trueTotalOrders : agencies.reduce((s, a) => s + a.orders, 0);
+    const remaining   = Math.max(GOAL - totalOrders, 0);
+    const pct         = Math.min(totalOrders / GOAL, 1);
+    const C           = 2 * Math.PI * 52; // ≈ 326.7
+
+    document.getElementById('goalNum').textContent = totalOrders;
+    // delay per sincronizzare con le altre animazioni
+    requestAnimationFrame(() => {
+      document.getElementById('ringFg').style.strokeDashoffset = (C * (1 - pct)).toFixed(2);
+    });
+
+    const caption = document.getElementById('goalCaption');
+    if (remaining > 0) {
+      caption.classList.remove('done');
+      caption.innerHTML = `Mancano <span class="remain-n">${remaining}</span> ordini al traguardo`;
+    } else {
+      caption.classList.add('done');
+      caption.textContent = '✓ Soglia raggiunta';
+    }
+
+    const list = document.getElementById('list');
+    list.innerHTML = agencies.map((a, i) => {
+      const pct    = (positionFor(a.orders, a.cfg.anchors) * 100).toFixed(2) + '%';
+      const isZero = a.total === 0;
+      const ticknumsHtml = a.cfg.ticks.map(t => `<span style="--x:${t.x}">${t.n}</span>`).join('');
+      const ticksHtml    = a.cfg.ticks.map(t => `<i class="bar-tick" style="--x:${t.x}"></i>`).join('');
+      const ratesHtml    = a.cfg.rates.map(r => `<span style="--x:${r.x}">${r.label}</span>`).join('');
+      return `
+      <div class="rrow" style="animation-delay: ${0.05 * i + 0.5}s">
+        <div class="rrow-head">
+          <div class="rrow-rank">${String(i + 1).padStart(2, '0')}</div>
+          <div>
+            <div class="rrow-city">${a.branch}</div>
+            <div class="rrow-branch">${a.city}</div>
+          </div>
+          <div class="rrow-right">
+            <div class="rrow-total ${isZero ? 'zero' : ''}">${fmtEUR(a.total)}</div>
+            ${(() => {
+              const ns = nextStep(a.orders, a.cfg);
+              if (!ns) return `
+                <div class="next-hint top">
+                  <div class="next-hint-icon">✓</div>
+                  <span class="next-hint-label">fascia massima</span>
+                </div>`;
+              const tipText = `Con altri <strong>${ns.ordersNeeded} ordini</strong> passi alla fascia da <strong>${fmtEUR(ns.nextRate)}/ordine</strong>, guadagni altri <strong>${fmtEUR(ns.additionalGain)}</strong> portando il tuo rappel totale a <strong>${fmtEUR(ns.newTotal)}</strong>.`;
+              return `
+                <div class="next-hint">
+                  <span class="next-hint-label">+${ns.ordersNeeded} ordini → ${fmtEUR(ns.additionalGain)}</span>
+                  <div class="next-hint-icon">i</div>
+                  <div class="next-tooltip">${tipText}</div>
+                </div>`;
+            })()}
+          </div>
+        </div>
+        <div class="bar-wrap">
+          <div class="bar-ticknums">${ticknumsHtml}</div>
+          <div class="bar-track">
+            <div class="bar-fill" data-pct="${pct}"></div>
+            ${ticksHtml}
+            <div class="bar-flag ${isZero ? 'zero' : ''}" data-pct="${pct}" style="--x:0%">
+              <div class="flag-body">${a.orders} ordini</div>
+            </div>
+          </div>
+          <div class="bar-rates">${ratesHtml}</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    requestAnimationFrame(() => {
+      list.querySelectorAll('.rrow').forEach((row, i) => {
+        row.classList.add('in');
+        const fill = row.querySelector('.bar-fill');
+        const flag = row.querySelector('.bar-flag');
+        const pct  = fill.dataset.pct;
+        // Attende slide-in della row (0.5 + 0.05·i s) poi avvia il riempimento
+        setTimeout(() => {
+          fill.style.width = pct;
+          flag.style.setProperty('--x', pct);
+        }, 650 + i * 60);
+      });
+    });
+  }
+
+  loadData();
+</script>
+
+</body>
+</html>
