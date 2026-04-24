@@ -246,35 +246,52 @@
     }
     .btn-ghost:hover { background: #fef2f2; color: var(--red); }
 
-    /* ────── LEGEND ────── */
-    .legend {
+    /* ────── TARIFF CARD ────── */
+    .tariff-card {
       margin-top: 16px;
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 16px 20px;
-      box-shadow: 0 1px 3px rgba(0,0,0,.05);
+      overflow: hidden;
+      border: 1px solid var(--border);
       animation: fadeUp .5s .45s cubic-bezier(.2,.8,.2,1) both;
     }
-    .legend h3 {
-      font-size: .67rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .12em; color: var(--text-dim); margin-bottom: 12px;
+    .tariff-card-header {
+      padding: 11px 16px;
+      font-size: .72rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: .1em;
+      color: #fff; text-align: center;
+      background: var(--red);
     }
-    .legend-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
-      gap: 8px;
-    }
-    .legend-item {
-      display: flex; align-items: center; gap: 9px;
-      font-size: .82rem; color: var(--text-muted);
-      background: var(--bg-surface2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
+    .tariff-card table { width: 100%; border-collapse: collapse; }
+    .tariff-card thead { background: rgba(0,0,0,.02); }
+    .tariff-card thead th {
       padding: 8px 12px;
+      text-align: center; font-size: .65rem;
+      font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--text-dim);
     }
-    .legend-item .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); flex-shrink: 0; }
-    .legend-item strong { color: var(--text); font-weight: 700; }
+    .tariff-card thead th:first-child { text-align: left; }
+    .tariff-card tbody td {
+      padding: 8px 12px;
+      border-top: 1px solid var(--border);
+      font-size: .82rem; color: var(--text-muted);
+    }
+    .tariff-card tbody td:not(:first-child) { text-align: center; font-weight: 600; color: var(--red); }
+    .tariff-card tbody tr:hover { background: var(--bg-surface2); }
+
+    /* ────── BILLING NOTE ────── */
+    .billing-note {
+      background: rgba(247,149,0,.07);
+      border: 1px solid rgba(247,149,0,.2);
+      border-left: 3px solid var(--orange);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      font-size: .82rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
+      animation: fadeUp .5s .2s cubic-bezier(.2,.8,.2,1) both;
+    }
+    .billing-note strong { color: var(--orange); }
 
     /* ────── ANIMATIONS ────── */
     @keyframes fadeUp   { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
@@ -342,12 +359,20 @@
 <div class="page-hero">
   <div class="hero-inner">
     <div class="eyebrow"><span class="eyebrow-dot"></span>Simulatore provvigioni</div>
-    <div class="page-title">Buoni Pasto Edenred<br><em>Provvigioni rete agenziale.</em></div>
+    <div class="page-title">Buoni Pasto - Ticket Restaurant Edenred<br><em>Provvigioni Agenzia.</em></div>
   </div>
 </div>
 
 <!-- ── MAIN ── -->
 <main>
+
+  <!-- Nota stima -->
+  <div class="billing-note">
+    <strong>Stima su base annua</strong> &mdash;
+    La provvigione indicata è calcolata su <strong>255 giorni lavorativi annui</strong>
+    (n. dipendenti &times; valore buono &times; 255 giorni &times; % provvigionale).
+    Il dato è puramente indicativo e potrà variare in funzione delle effettive necessità dell'azienda.
+  </div>
 
   <!-- Totale -->
   <div class="total-card">
@@ -362,6 +387,14 @@
   <div class="table-card">
     <div class="card-header">
       <h2>Elenco Aziende</h2>
+      <button class="btn btn-ghost" onclick="clearAll()" title="Elimina tutti">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+          <path d="M10 11v6M14 11v6"/>
+        </svg>
+        Elimina tutti
+      </button>
     </div>
     <div class="table-wrap">
       <table>
@@ -402,17 +435,22 @@
     </div>
   </div>
 
-  <!-- Legenda fasce -->
-  <div class="legend">
-    <h3>Fasce provvigionali — base 255 giorni lavorativi / anno</h3>
-    <div class="legend-grid">
-      <div class="legend-item"><span class="dot"></span>1–30 dip. <strong>2,50%</strong></div>
-      <div class="legend-item"><span class="dot"></span>31–45 dip. <strong>2,00%</strong></div>
-      <div class="legend-item"><span class="dot"></span>46–60 dip. <strong>1,50%</strong></div>
-      <div class="legend-item"><span class="dot"></span>61–120 dip. <strong>1,00%</strong></div>
-      <div class="legend-item"><span class="dot"></span>121–500 dip. <strong>0,50%</strong></div>
-      <div class="legend-item"><span class="dot"></span>&gt;500 dip. <strong>0,00%</strong></div>
-    </div>
+  <!-- Fasce provvigionali -->
+  <div class="tariff-card">
+    <div class="tariff-card-header">Buoni Pasto - Ticket Restaurant</div>
+    <table>
+      <thead>
+        <tr><th>Dipendenti</th><th>% Provv.</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1 – 30 dip.</td><td>2,50%</td></tr>
+        <tr><td>31 – 45 dip.</td><td>2,00%</td></tr>
+        <tr><td>46 – 60 dip.</td><td>1,50%</td></tr>
+        <tr><td>61 – 120 dip.</td><td>1,00%</td></tr>
+        <tr><td>121 – 500 dip.</td><td>0,50%</td></tr>
+        <tr><td>&gt; 500 dip.</td><td>0,00%</td></tr>
+      </tbody>
+    </table>
   </div>
 
 </main>
@@ -539,6 +577,14 @@
     rows = rows.filter(r => r.id !== id);
     render();
     showToast('Riga eliminata');
+  }
+
+  function clearAll() {
+    if (rows.length === 0) return;
+    if (!confirm('Eliminare tutte le aziende?')) return;
+    rows = [];
+    render();
+    showToast('Elenco svuotato');
   }
 
   let toastT;
