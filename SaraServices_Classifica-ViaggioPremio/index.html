@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
+  <!-- v1 -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sara Mobility — Leaderboard viaggio premio</title>
@@ -419,8 +420,8 @@
   // ── Configurazione — Apps Script Web App (foglio privato) ──
   const API_URL = "https://script.google.com/macros/s/AKfycbz_mCFd02IAYrtBYZde1SoM2oYVIP4mgdkuqnOWXQsIY4t8Hfne1WtCdnEjG5P-G-tG/exec";
 
-  // 0=Posizione, 1=Agenzia, 2=Tipologia, 3=N.Ordini, 4=Variazione, 5=Ultimo aggiornamento
-  const COL_RANK = 0, COL_AGENZIA = 1, COL_TIPOLOGIA = 2, COL_ORDINI = 3, COL_VARIAZIONE = 4, COL_AGGIORNATO = 5;
+  // 0=Posizione, 1=Agenzia, 2=Tipologia, 3=N.Ordini, 4=Variazione, 5=Ultimo aggiornamento, 6=MD5
+  const COL_RANK = 0, COL_AGENZIA = 1, COL_TIPOLOGIA = 2, COL_ORDINI = 3, COL_VARIAZIONE = 4, COL_AGGIORNATO = 5, COL_MD5 = 6;
 
   // ── Parsing timestamp DD/MM/YYYY HH:MM:SS ──
   function parseDateTime(str) {

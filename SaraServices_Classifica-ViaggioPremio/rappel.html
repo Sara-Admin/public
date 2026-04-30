@@ -228,6 +228,7 @@
       font-size: 11px; font-family: 'Manrope', sans-serif;
       opacity: .45; font-weight: 700;
     }
+    .single-view .rrow-rank { visibility: hidden; }
     .rrow-city   { font-size: 13px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
     .rrow-branch { font-size: 11px; opacity: .55; margin-top: 1px; }
     .rrow-total {
@@ -589,8 +590,24 @@
   // ── Configurazione — Apps Script Web App (foglio privato) ──
   const API_URL = "https://script.google.com/macros/s/AKfycbz_mCFd02IAYrtBYZde1SoM2oYVIP4mgdkuqnOWXQsIY4t8Hfne1WtCdnEjG5P-G-tG/exec";
 
-  // 0=Posizione, 1=Agenzia, 2=Tipologia, 3=N.Ordini, 4=Variazione, 5=Ultimo aggiornamento
-  const COL_RANK = 0, COL_AGENZIA = 1, COL_TIPOLOGIA = 2, COL_ORDINI = 3, COL_AGGIORNATO = 5;
+  // 0=Posizione, 1=Agenzia, 2=Tipologia, 3=N.Ordini, 4=Variazione, 5=Ultimo aggiornamento, 6=MD5
+  const COL_RANK = 0, COL_AGENZIA = 1, COL_TIPOLOGIA = 2, COL_ORDINI = 3, COL_AGGIORNATO = 5, COL_MD5 = 6;
+
+  // ── Rilevamento parametro URL ──
+  // ?SS          → mostra tutte le agenzie
+  // ?<md5>       → mostra solo l'agenzia con quell'MD5
+  // (nessun param) → nessun dato
+  const _search = window.location.search;
+  let viewMode  = 'none';   // 'none' | 'all' | 'single'
+  let filterMd5 = null;
+
+  if (_search.toLowerCase() === '?ss') {
+    viewMode = 'all';
+  } else if (_search && _search.length > 1) {
+    filterMd5 = _search.slice(1).split('&')[0].split('=')[0];
+    viewMode  = 'single';
+    document.body.classList.add('single-view');
+  }
 
   // ── Config rappel per tipologia ──
   const RAPPEL = {
@@ -687,6 +704,12 @@
   }
 
   async function loadData() {
+    if (viewMode === 'none') {
+      document.getElementById('list').innerHTML =
+        '<div class="error-box">Accesso non autorizzato.</div>';
+      return;
+    }
+
     try {
       const res = await fetch(API_URL);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -696,7 +719,16 @@
       const totalRow = allRows.find(r => (r[COL_AGENZIA] || '').toString().trim().toUpperCase() === 'TOTALE ORDINI 2026');
       const totalOrders = totalRow ? (parseInt(totalRow[COL_ORDINI]) || 0) : null;
 
-      const rows = allRows.filter(r => r[COL_RANK] && r[COL_ORDINI]);
+      let rows = allRows.filter(r => r[COL_RANK] && r[COL_ORDINI]);
+
+      if (viewMode === 'single') {
+        rows = rows.filter(r => (r[COL_MD5] || '').toString().trim() === filterMd5);
+        if (rows.length === 0) {
+          document.getElementById('list').innerHTML =
+            '<div class="error-box">Agenzia non trovata.</div>';
+          return;
+        }
+      }
 
       const ultimaDataRaw = rows.find(r => r[COL_AGGIORNATO]);
       const ultimaData = ultimaDataRaw ? parseDateTime(ultimaDataRaw[COL_AGGIORNATO]) : null;
