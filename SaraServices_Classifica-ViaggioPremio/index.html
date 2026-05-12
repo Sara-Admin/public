@@ -418,25 +418,7 @@
 <script>
 
   // ── Configurazione — Apps Script Web App (foglio privato) ──
-  const API_URL = "https://script.google.com/macros/s/AKfycbz_mCFd02IAYrtBYZde1SoM2oYVIP4mgdkuqnOWXQsIY4t8Hfne1WtCdnEjG5P-G-tG/exec";
-
-  // 0=Posizione, 1=Agenzia, 2=Tipologia, 3=N.Ordini, 4=Variazione, 5=Ultimo aggiornamento, 6=MD5
-  const COL_RANK = 0, COL_AGENZIA = 1, COL_TIPOLOGIA = 2, COL_ORDINI = 3, COL_VARIAZIONE = 4, COL_AGGIORNATO = 5, COL_MD5 = 6;
-
-  // ── Parsing timestamp DD/MM/YYYY HH:MM:SS ──
-  function parseDateTime(str) {
-    if (!str) return null;
-    const [datePart, timePart] = str.split(' ');
-    const parts = datePart.split('/');
-    if (parts.length !== 3) return null;
-    const d = parseInt(parts[0]), mon = parseInt(parts[1]) - 1, y = parseInt(parts[2]);
-    if (isNaN(d) || isNaN(mon) || isNaN(y)) return null;
-    if (timePart) {
-      const [h, m, s] = timePart.split(':').map(Number);
-      return new Date(y, mon, d, h, m, s);
-    }
-    return new Date(y, mon, d);
-  }
+  const API_URL = "https://script.google.com/macros/s/AKfycbwuBHgAdLOm2_5ovmB_JtYvlv0ED7WAPviW4J_dNbRWK3ODhA2Qvu0MobCXC-5UAHlB/exec";
 
   // ── Split "SALERNO - Sarno - 1336" → { city, branch } ──
   function splitAgency(name) {
@@ -445,36 +427,35 @@
     return { city: name.slice(0, idx), branch: name.slice(idx + 3) };
   }
 
-  // ── Fetch + parse Sheet2 via Apps Script Web App ──
+  // ── Fetch + parse Apps Script Web App ──
+  // Risposta attesa: { ultimo_aggiornamento, totale_generale, classifica: [{posizione, agenzia, tipologia, ordini, variazione, md5}] }
   async function loadData() {
     try {
       const res = await fetch(API_URL);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
-      const rows = json.values || [];
-      const data = processRows(rows);
+      const data = processData(json);
       render(data);
     } catch (err) {
       showError(err.message);
     }
   }
 
-  function processRows(rows) {
-    const dataRows = rows.slice(1).filter(r => r[COL_RANK] && r[COL_ORDINI]);
-    const ultimaDataRaw = dataRows.find(r => r[COL_AGGIORNATO]);
-    const ultimaData = ultimaDataRaw ? parseDateTime(ultimaDataRaw[COL_AGGIORNATO]) : null;
+  function processData(json) {
+    const items = Array.isArray(json.classifica) ? json.classifica : [];
+    const ultimaData = json.ultimo_aggiornamento ? new Date(json.ultimo_aggiornamento) : null;
 
-    const leaderboard = dataRows.map(row => {
-      const v = parseInt(row[COL_VARIAZIONE]) || 0;
-      const { city, branch } = splitAgency((row[COL_AGENZIA] || '').trim());
+    const leaderboard = items.map(item => {
+      const v = parseInt(item.variazione) || 0;
+      const { city, branch } = splitAgency((item.agenzia || '').toString().trim());
       return {
-        rank:   parseInt(row[COL_RANK]),
+        rank:   parseInt(item.posizione),
         city, branch,
-        orders: parseInt(row[COL_ORDINI]) || 0,
+        orders: parseInt(item.ordini) || 0,
         trend:  v > 0 ? 'up' : v < 0 ? 'down' : 'flat',
         delta:  Math.abs(v),
       };
-    }).filter(a => a.city && !isNaN(a.rank));
+    }).filter(a => a.city && !isNaN(a.rank) && a.orders > 0);
 
     return { leaderboard, ultimaData };
   }

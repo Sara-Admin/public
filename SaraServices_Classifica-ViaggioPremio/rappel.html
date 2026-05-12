@@ -588,10 +588,7 @@
 
 <script>
   // ── Configurazione — Apps Script Web App (foglio privato) ──
-  const API_URL = "https://script.google.com/macros/s/AKfycbz_mCFd02IAYrtBYZde1SoM2oYVIP4mgdkuqnOWXQsIY4t8Hfne1WtCdnEjG5P-G-tG/exec";
-
-  // 0=Posizione, 1=Agenzia, 2=Tipologia, 3=N.Ordini, 4=Variazione, 5=Ultimo aggiornamento, 6=MD5
-  const COL_RANK = 0, COL_AGENZIA = 1, COL_TIPOLOGIA = 2, COL_ORDINI = 3, COL_AGGIORNATO = 5, COL_MD5 = 6;
+  const API_URL = "https://script.google.com/macros/s/AKfycbwuBHgAdLOm2_5ovmB_JtYvlv0ED7WAPviW4J_dNbRWK3ODhA2Qvu0MobCXC-5UAHlB/exec";
 
   // ── Rilevamento parametro URL ──
   // ?SS          → mostra tutte le agenzie
@@ -683,26 +680,13 @@
     return '€ ' + Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   }
 
-  function parseDateTime(str) {
-    if (!str) return null;
-    const [datePart, timePart] = str.split(' ');
-    const parts = datePart.split('/');
-    if (parts.length !== 3) return null;
-    const d = parseInt(parts[0]), mon = parseInt(parts[1]) - 1, y = parseInt(parts[2]);
-    if (isNaN(d) || isNaN(mon) || isNaN(y)) return null;
-    if (timePart) {
-      const [h, m, s] = timePart.split(':').map(Number);
-      return new Date(y, mon, d, h, m, s);
-    }
-    return new Date(y, mon, d);
-  }
-
   function splitAgency(name) {
     const idx = name.indexOf(' - ');
     if (idx === -1) return { city: name, branch: '' };
     return { city: name.slice(0, idx), branch: name.slice(idx + 3) };
   }
 
+  // Risposta attesa: { ultimo_aggiornamento, totale_generale, classifica: [{posizione, agenzia, tipologia, ordini, variazione, md5}] }
   async function loadData() {
     if (viewMode === 'none') {
       document.getElementById('list').innerHTML =
@@ -714,30 +698,27 @@
       const res = await fetch(API_URL);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
-      const allRows = (json.values || []).slice(1);
 
-      const totalRow = allRows.find(r => (r[COL_AGENZIA] || '').toString().trim().toUpperCase() === 'TOTALE ORDINI 2026');
-      const totalOrders = totalRow ? (parseInt(totalRow[COL_ORDINI]) || 0) : null;
+      const totalOrders = (json.totale_generale != null) ? (parseInt(json.totale_generale) || 0) : null;
+      const ultimaData  = json.ultimo_aggiornamento ? new Date(json.ultimo_aggiornamento) : null;
 
-      let rows = allRows.filter(r => r[COL_RANK] && r[COL_ORDINI]);
+      let items = (Array.isArray(json.classifica) ? json.classifica : [])
+        .filter(it => it && it.posizione != null && (parseInt(it.ordini) || 0) > 0);
 
       if (viewMode === 'single') {
-        rows = rows.filter(r => (r[COL_MD5] || '').toString().trim() === filterMd5);
-        if (rows.length === 0) {
+        items = items.filter(it => (it.md5 || '').toString().trim() === filterMd5);
+        if (items.length === 0) {
           document.getElementById('list').innerHTML =
             '<div class="error-box">Agenzia non trovata.</div>';
           return;
         }
       }
 
-      const ultimaDataRaw = rows.find(r => r[COL_AGGIORNATO]);
-      const ultimaData = ultimaDataRaw ? parseDateTime(ultimaDataRaw[COL_AGGIORNATO]) : null;
-
-      const agencies = rows.map(r => {
-        const orders = parseInt(r[COL_ORDINI]) || 0;
-        const cfg    = configFor(r[COL_TIPOLOGIA]);
+      const agencies = items.map(it => {
+        const orders = parseInt(it.ordini) || 0;
+        const cfg    = configFor(it.tipologia);
         const rate   = cfg.rate(orders);
-        const { city, branch } = splitAgency((r[COL_AGENZIA] || '').trim());
+        const { city, branch } = splitAgency((it.agenzia || '').toString().trim());
         return { city, branch, orders, rate, cfg, total: orders * rate };
       }).sort((a, b) => b.total - a.total || b.orders - a.orders);
 
